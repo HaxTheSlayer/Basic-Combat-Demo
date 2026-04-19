@@ -12,13 +12,18 @@ public class Player : MonoBehaviour
     
     private void Update()
     {
+        Vector3 camForward = Camera.main.transform.forward.normalized;
+        Vector3 camRight = Camera.main.transform.right.normalized;
+        camForward.y = 0;
+        camRight.y = 0;
+
         Vector3 inputVector = gameInput.GetMovementVectorNormalized();
-        Vector3 movDir = new Vector3(inputVector.x, 0, inputVector.y);
+        Vector3 movDir = (camForward * inputVector.y + camRight * inputVector.x).normalized;
 
         if (movDir.magnitude >= 0.1f)
         {
             //transform.forward = Vector3.Slerp(transform.forward, movDir, Time.deltaTime * 10f);
-            transform.forward = movDir;
+            transform.forward = Vector3.Slerp(transform.forward, movDir, Time.deltaTime * 10f);
             controller.Move(movDir * moveSpeed * Time.deltaTime);
 
             // Tell the Animator we are walking
@@ -31,5 +36,9 @@ public class Player : MonoBehaviour
             animator.SetFloat("VelX", 0);
             animator.SetFloat("VelZ", 0);
         }
+        //if (Input.GetKeyDown(KeyCode.Space))
+        //{
+
+        //}
     }
 }
