@@ -5,6 +5,7 @@ using UnityEngine.Animations.Rigging;
 
 public class Player : MonoBehaviour
 {
+    [SerializeField] Enemy enemy;
     [SerializeField] CharacterController controller;
     [SerializeField] Animator animator;
     [SerializeField] GameInput gameInput;
@@ -13,7 +14,11 @@ public class Player : MonoBehaviour
     public float moveSpeed = 2f;
     [SerializeField] Transform attackPoint; 
     public float attackRange = 0.5f;
-    [SerializeField] LayerMask enemyLayers; 
+    public float attackDamage = 30f;
+    [SerializeField] LayerMask enemyLayers;
+
+    public float currentHealth = 100f;
+    public float maxHealth = 100f;
 
     private void Update()
     {
@@ -45,7 +50,7 @@ public class Player : MonoBehaviour
         {
             Attack();
         }
-        Debug.Log("Animator IK Value: " + animator.GetFloat("IK_Weight"));
+
         combatRig.weight = animator.GetFloat("IK_Weight");
 
         //if (Input.GetKeyDown(KeyCode.Space))
@@ -62,12 +67,43 @@ public class Player : MonoBehaviour
 
     public void HitTarget()
     {
+        Debug.Log("HitTarget function was CALLED by the animation.");
+
         Collider[] hitEnemies = Physics.OverlapSphere(attackPoint.position, attackRange, enemyLayers);
 
-        foreach (Collider enemy in hitEnemies)
+        foreach (Collider enemyCollider in hitEnemies)
         {
-            Debug.Log("Hit: " + enemy.name);
-            // logic for durability loss and enemy damage goes here
+            enemy = enemyCollider.GetComponent<Enemy>();
+            if (enemy != null)
+            {
+                Debug.Log("Hit: " + enemy.name);
+                // For now, wasParried is false because this is a player attack
+                enemy.TakeDamage(attackDamage);
+                Debug.Log("Dealt damage to enemy!");
+            }
         }
+    }
+
+    public void TakeDamage(float damage)
+    {
+        currentHealth -= damage;
+        animator.SetTrigger("GetHit"); // Make sure you have this trigger in the Animator!
+    
+        Debug.Log("Player Health: " + currentHealth);
+
+        if (currentHealth <= 0)
+        {
+            // Handle Player Death (e.g., Reload Scene)
+            Debug.Log("Player Died!");
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (attackPoint == null) return;
+
+        // This draws a red sphere in the Scene View so you can see the reach
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
 }
