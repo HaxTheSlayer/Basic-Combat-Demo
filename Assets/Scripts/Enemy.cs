@@ -6,6 +6,7 @@ using UnityEngine.AI;
 public class Enemy : Character
 {
     [SerializeField] NavMeshAgent navMeshAgent;
+    public GameObject lockOnIcon;
     public Player player;
     public float chaseRange = 10f;
 
@@ -21,6 +22,13 @@ public class Enemy : Character
 
     private void Update()
     {
+        if (animator.GetCurrentAnimatorStateInfo(1).IsName("StunnedLoop"))
+        {
+            navMeshAgent.isStopped = true;
+            navMeshAgent.velocity = Vector3.zero; // Keep them planted
+            return; // EXIT the Update loop early! No chasing, no attacking.
+        }
+
         if (!animator.GetCurrentAnimatorStateInfo(1).IsName("MeleeAttack_OneHanded"))
         {
             hasDealtDamageThisSwing = false;

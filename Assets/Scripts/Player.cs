@@ -59,6 +59,19 @@ public class Player : Character
         {
             Attack();
         }
+
+        if (Input.GetMouseButtonDown(1)) // Right Click Pressed
+        {
+            isBlocking = true;
+            blockStartTime = Time.time; // Start the parry timer
+            animator.SetBool("IsBlocking", true);
+        }
+        else if (Input.GetMouseButtonUp(1)) // Right Click Released
+        {
+            isBlocking = false;
+            animator.SetBool("IsBlocking", false);
+        }
+
         //Debug.Log("Animator IK Value: " + animator.GetFloat("IK_Weight"));
         combatRig.weight = animator.GetFloat("IK_Weight");
 

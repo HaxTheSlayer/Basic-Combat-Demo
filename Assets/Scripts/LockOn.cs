@@ -9,6 +9,7 @@ public class LockOn : MonoBehaviour
 
     public float lockOnRadius = 15f;
     public LayerMask targetLayers;
+    private GameObject activeLockOnIcon;
 
     public Transform CurrentTarget { get; private set; }
     public bool IsLockedOn { get; private set; }
@@ -49,6 +50,12 @@ public class LockOn : MonoBehaviour
         {
             CurrentTarget = closestEnemy;
             IsLockedOn = true;
+            Enemy enemyScript = CurrentTarget.GetComponentInParent<Enemy>();
+            if (enemyScript != null && enemyScript.lockOnIcon != null)
+            {
+                activeLockOnIcon = enemyScript.lockOnIcon;
+                activeLockOnIcon.SetActive(true);
+            }
 
             lockOnCamera.LookAt = CurrentTarget;
 
@@ -60,6 +67,12 @@ public class LockOn : MonoBehaviour
     {
         IsLockedOn = false;
         CurrentTarget = null;
+
+        if (activeLockOnIcon != null)
+        {
+            activeLockOnIcon.SetActive(false);
+            activeLockOnIcon = null;
+        }
 
         lockOnCamera.LookAt = null;
         lockOnCamera.Priority = 0;
