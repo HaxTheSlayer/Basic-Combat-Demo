@@ -3,19 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
-public class Player : MonoBehaviour
+public class Player : Character
 {
     [SerializeField] CharacterController controller;
-    [SerializeField] Animator animator;
     [SerializeField] GameInput gameInput;
-    [SerializeField] Rig combatRig;
+    [SerializeField] LockOn lockOn;
 
     public float moveSpeed = 2f;
-    [SerializeField] Transform attackPoint; 
-    public float attackRange = 0.5f;
-    [SerializeField] LayerMask enemyLayers; 
-
-    private void Update()
+    private void Movement()
     {
         Vector3 camForward = Camera.main.transform.forward.normalized;
         Vector3 camRight = Camera.main.transform.right.normalized;
@@ -27,30 +22,49 @@ public class Player : MonoBehaviour
 
         if (movDir.magnitude >= 0.1f)
         {
-            //transform.forward = Vector3.Slerp(transform.forward, movDir, Time.deltaTime * 10f);
             transform.forward = Vector3.Slerp(transform.forward, movDir, Time.deltaTime * 10f);
+            movDir.y = 0;
             controller.Move(movDir * moveSpeed * Time.deltaTime);
 
-            // Tell the Animator we are walking
             animator.SetFloat("VelX", inputVector.x);
             animator.SetFloat("VelZ", inputVector.y);
         }
         else
         {
-            // Tell the Animator we have stopped
             animator.SetFloat("VelX", 0);
             animator.SetFloat("VelZ", 0);
         }
+
+        if (lockOn != null && lockOn.IsLockedOn && lockOn.CurrentTarget != null)
+        {
+            // Combat Strafe: Stare at the enemy
+            Vector3 dirToTarget = (lockOn.CurrentTarget.position - transform.position).normalized;
+            dirToTarget.y = 0;
+            transform.forward = Vector3.Slerp(transform.forward, dirToTarget, Time.deltaTime * 15f);
+        }
+        else if (movDir.magnitude >= 0.1f)
+        {
+            transform.forward = Vector3.Slerp(transform.forward, movDir, Time.deltaTime * 10f);
+        }
+    }
+    private void Update()
+    {
+        if (!animator.GetCurrentAnimatorStateInfo(1).IsName("MeleeAttack_OneHanded"))
+        {
+            hasDealtDamageThisSwing = false;
+        }
+
+        Movement();
         if (Input.GetMouseButtonDown(0)) // Left Click
         {
             Attack();
         }
-        Debug.Log("Animator IK Value: " + animator.GetFloat("IK_Weight"));
+        //Debug.Log("Animator IK Value: " + animator.GetFloat("IK_Weight"));
         combatRig.weight = animator.GetFloat("IK_Weight");
 
-        //if (Input.GetKeyDown(KeyCode.Space))
+        //if (currentHealth == 0)
         //{
-
+        //    Die();
         //}
     }
 
@@ -58,16 +72,5 @@ public class Player : MonoBehaviour
     {
         // This fires the trigger you just set as a condition
         animator.SetTrigger("Attack");
-    }
-
-    public void HitTarget()
-    {
-        Collider[] hitEnemies = Physics.OverlapSphere(attackPoint.position, attackRange, enemyLayers);
-
-        foreach (Collider enemy in hitEnemies)
-        {
-            Debug.Log("Hit: " + enemy.name);
-            // logic for durability loss and enemy damage goes here
-        }
     }
 }
