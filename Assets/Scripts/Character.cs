@@ -20,6 +20,7 @@ public class Character : MonoBehaviour
     public LayerMask targetLayers;
 
     public GameObject parryVFXPrefab;
+    public GameObject damageText;
     public Transform parryVFXSpawnPoint;
 
     public bool isBlocking = false;
@@ -72,6 +73,9 @@ public class Character : MonoBehaviour
                 // (Optional) Trigger a small 'block recoil' animation here
             }
         }
+
+        DamageNumbers indicator = Instantiate(damageText, transform.position, Quaternion.identity).GetComponent<DamageNumbers>();
+        indicator.SetDamageText(damage);
 
         // 2. Apply damage and clamp to 0 so we don't get negative HP
         currentHealth -= damage;
