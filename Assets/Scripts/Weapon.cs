@@ -14,7 +14,7 @@ public class Weapon : MonoBehaviour
 
     private void Awake()
     {
-        weaponCollider = GetComponent<Collider>();
+        weaponCollider = GetComponent<CapsuleCollider>();
     }
 
     private void OnTriggerStay(Collider other)

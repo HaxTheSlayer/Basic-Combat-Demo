@@ -10,6 +10,7 @@ public class Character : MonoBehaviour
     public float currentHealth;
     private float attackDamage = 30f;
     public bool hasDealtDamageThisSwing = false;
+    public bool isDead = false;
     public Slider healthBar;
 
     public Weapon weapon;
@@ -99,6 +100,12 @@ public class Character : MonoBehaviour
         //if (currentHealth <= 0) Die();
     }
 
+    public void Despawn()
+    {
+        // Optional: Instantiate a puff of smoke or dissolve VFX here if you have one
+        Destroy(gameObject);
+    }
+
     private void SuccessfulParry(Character attacker)
     {
         Debug.Log($"{gameObject.name} executed a PERFECT PARRY!");
@@ -124,8 +131,23 @@ public class Character : MonoBehaviour
 
     public virtual void Die()
     {
+        // 1. Safety check: If already dead, do nothing
+        if (isDead) return;
+        isDead = true;
+
+        // 2. Turn off the IK Rig so the death animation can take full control of the arms
+        if (combatRig != null)
+        {
+            combatRig.weight = 0f;
+        }
+
+        // 3. Play the animation
         animator.SetTrigger("Die");
         Debug.Log($"{gameObject.name} has died.");
+
+        // 4. Bulletproof Despawn: Unity will automatically destroy the object after exactly 2.5 seconds
+        // Adjust this float to match the length of your death animation!
+        Destroy(gameObject, 1.7f);
     }
 
     public virtual void HitTarget()

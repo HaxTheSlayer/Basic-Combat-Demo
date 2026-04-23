@@ -22,32 +22,51 @@ public class Enemy : Character
 
     private void Update()
     {
-        if (animator.GetCurrentAnimatorStateInfo(1).IsName("StunnedLoop"))
-        {
-            navMeshAgent.isStopped = true;
-            navMeshAgent.velocity = Vector3.zero; // Keep them planted
-            return; // EXIT the Update loop early! No chasing, no attacking.
-        }
+        if (isDead) return;
 
-        if (!animator.GetCurrentAnimatorStateInfo(1).IsName("MeleeAttack_OneHanded"))
+        if (navMeshAgent != null)
         {
-            hasDealtDamageThisSwing = false;
-        }
-        combatRig.weight = animator.GetFloat("IK_Weight");
+            if (animator.GetCurrentAnimatorStateInfo(1).IsName("Death"))
+            {
+                // Only disable the agent once to avoid repeated calls
+                if (navMeshAgent.isActiveAndEnabled)
+                {
+                    navMeshAgent.isStopped = true;
+                    navMeshAgent.velocity = Vector3.zero;
+                    navMeshAgent.enabled = false; // Disable safely instead of destroying
+                }
+                return; // Exit early: no chasing, no attacking
+            }
 
-        float distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
+            if (animator.GetCurrentAnimatorStateInfo(1).IsName("StunnedLoop"))
+            {
+                navMeshAgent.isStopped = true;
+                navMeshAgent.velocity = Vector3.zero; // Keep them planted
+                return; // EXIT the Update loop early! No chasing, no attacking.
+            }
 
-        if (distanceToPlayer <= attackRange)
-        {
-            AttackState();
-        }
-        else if (distanceToPlayer <= chaseRange)
-        {
-            ChasePlayer();
-        }
-        else
-        {
-            Idle();
+            if (!navMeshAgent.isActiveAndEnabled) return;
+
+            if (!animator.GetCurrentAnimatorStateInfo(1).IsName("MeleeAttack_OneHanded"))
+            {
+                hasDealtDamageThisSwing = false;
+            }
+            combatRig.weight = animator.GetFloat("IK_Weight");
+
+            float distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
+
+            if (distanceToPlayer <= attackRange)
+            {
+                AttackState();
+            }
+            else if (distanceToPlayer <= chaseRange)
+            {
+                ChasePlayer();
+            }
+            else
+            {
+                Idle();
+            }
         }
     }
 

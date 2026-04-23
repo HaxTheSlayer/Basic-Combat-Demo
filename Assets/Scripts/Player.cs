@@ -75,10 +75,10 @@ public class Player : Character
         //Debug.Log("Animator IK Value: " + animator.GetFloat("IK_Weight"));
         combatRig.weight = animator.GetFloat("IK_Weight");
 
-        //if (currentHealth == 0)
-        //{
-        //    Die();
-        //}
+        if (currentHealth == 0)
+        {
+            Die();
+        }
     }
 
     private void Attack()

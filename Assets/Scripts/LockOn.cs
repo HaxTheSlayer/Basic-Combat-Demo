@@ -55,6 +55,7 @@ public class LockOn : MonoBehaviour
             {
                 activeLockOnIcon = enemyScript.lockOnIcon;
                 activeLockOnIcon.SetActive(true);
+                activeLockOnIcon.transform.LookAt(Camera.main.transform);
             }
 
             lockOnCamera.LookAt = CurrentTarget;

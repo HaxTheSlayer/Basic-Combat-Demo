@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5306628097022751573}
   - component: {fileID: 7944377688359503775}
   - component: {fileID: -5450628683822873547}
+  - component: {fileID: 4978301353614590702}
   m_Layer: 0
   m_Name: Sword1_Gold
   m_TagString: Untagged
@@ -111,3 +112,26 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!136 &4978301353614590702
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8449004803641222730}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.18138425
+  m_Height: 2.3628883
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.47956425, z: 0}
