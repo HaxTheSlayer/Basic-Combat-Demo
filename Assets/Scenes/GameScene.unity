@@ -2959,7 +2959,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40949ee2cbec16a448b8ea8634bc7852, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 1000
+  maxHealth: 200
   currentHealth: 0
   hasDealtDamageThisSwing: 0
   isDead: 0

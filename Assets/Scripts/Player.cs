@@ -47,6 +47,12 @@ public class Player : Character
             transform.forward = Vector3.Slerp(transform.forward, movDir, Time.deltaTime * 10f);
         }
     }
+    public override void Start()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+
     private void Update()
     {
         if (!animator.GetCurrentAnimatorStateInfo(1).IsName("MeleeAttack_OneHanded"))
